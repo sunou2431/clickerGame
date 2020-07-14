@@ -1,0 +1,53 @@
+.mainContents{
+  margin-top: 50px;
+  padding: 30px;
+}
+
+span{
+  display: block;
+}
+
+.button-area{
+  border: 1px solid #e0e0e0;
+  height: 300px;
+  width: 300px;
+  display: inline-block;
+}
+
+.shop-menu{
+  border: solid 1px #d0d0d0;
+  background-color: #F0F0F0;
+  padding: 10px;
+  margin: 10px;
+}
+
+.shop-menu-item-price{
+  margin: 10px;
+}
+
+.shop-menu-buy-count{
+  margin: 10px;
+}
+
+.shop-menu-buy-button{
+  margin: 10px;
+}
+
+.click{
+  text-align: center;
+}
+
+.click-name{
+  width: 70%;
+  text-align: center;
+  border: none;
+  border-bottom: solid 1px #e0e0e0;
+}
+
+.click-have-count{
+  font-size: 180%;
+}
+
+.click-vied-data{
+  font-size: 70%;
+}
