@@ -1,12 +1,17 @@
 window.onload = function(){
   const templateHTML = `
-    <div class="shop-menu" @click="wantToBuyItem">
-      <span class="shop-menu-item-name">名前:{{ shopItem.name }}</span>
-      <span class="shop-menu-item-price">値段:{{ shopItem.price }}</span>
-      <span class="shop-menu-buy-count">購入個数:{{ buyCount }}</span>
-      <span class="shop-menu-overview">{{ shopItem.overView }}</span>
-      <span class="shop-menu-which-add" v-if="shopItem.isPerSecValue">自動生産量が上がる</span>
-      <span class="shop-menu-which-add" v-else>クリック生産量が上がる</span>
+    <div class="shop-menu">
+      <div class="shop-menu-list" @click="wantToBuyItem">
+        <div class="shop-menu-list-item-image">img</div>
+        <span class="shop-menu-list-item-name">{{ shopItem.name }}</span>
+        <span class="shop-menu-list-item-price">値段:{{ shopItem.price }}</span>
+        <span class="shop-menu-list-buy-count">{{ buyCount }}</span>
+      </div>
+      <div class="shop-menu-balloon">
+        <div class="shop-menu-balloon-overview">{{ shopItem.overView }}</div>
+        <div class="shop-menu-balloon-which-add" v-if="shopItem.isPerSecValue">自動生産量が{{ shopItem.increaseValue }}上がる</div>
+        <div class="shop-menu-balloon-which-add" v-else>クリック生産量が{{ shopItem.increaseValue }}上がる</div>
+      </div>
     </div>
   `;
   
@@ -26,9 +31,7 @@ window.onload = function(){
       }
     },
     created: function(){
-      if( this.buyCount == null ){
-        this.test = 0;
-      }
+      console.log(" TEST ");
     },
     template: templateHTML
   });
@@ -107,13 +110,15 @@ window.onload = function(){
         }
       },
 
-      // 値段の登録
+      // buyCountに未登録の商品IDを0にする。
       setBuyCount: function(){
         for( let i = 0; i < this.shopItems.length ; i++ ){
           this.buyCount[ this.shopItems[i].id ] = this.buyCount[ this.shopItems[i].id ] || 0;
         }
       },
 
+      // 商品の値段を計算する。
+      // Cookieに保存する方法も考えたけど…
       setShopItemsPrice: function(){
         for( let key in this.buyCount ){
           const shopItem = this.shopItems.find((value) => value.id === key);
@@ -121,6 +126,10 @@ window.onload = function(){
         }
       },
 
+      // 再帰関数で値段を求めていく
+      // 引数 : price => int : 商品の値段
+      //      : count => int : 買った商品の個数
+      // 返り : int          : 1.15倍した数値。切り下げ
       priceIncrease: function(price, count){
         if( count == 0 ){
           return price;
@@ -135,9 +144,9 @@ window.onload = function(){
       this.timerObjForMake = setInterval( function(){ self.increaseCountPerSecond() }, 1000);
       this.timerObjForSave = setInterval( function(){ self.saveToCookiePerMinute() }, 1000 * 60 );
 
-      this.loadForCookie();
-      this.setBuyCount();
-      this.setShopItemsPrice();
+      this.loadForCookie(); // クッキーからのデータ取得
+      this.setBuyCount();   // 未購入の商品はnullになっているため0を埋める
+      this.setShopItemsPrice(); // 商品の値段の計算
     },
     components: {
       "shop-items": shopItemsComponent

@@ -3,10 +3,6 @@
   padding: 30px;
 }
 
-span{
-  display: block;
-}
-
 .button-area{
   border: 1px solid #e0e0e0;
   height: 300px;
@@ -14,23 +10,84 @@ span{
   display: inline-block;
 }
 
+.buy-message{
+  text-align: center;
+  font-size: 30px;
+}
+
 .shop-menu{
+  position: relative
+}
+
+.shop-menu-list{
   border: solid 1px #d0d0d0;
   background-color: #F0F0F0;
   padding: 10px;
   margin: 10px;
+  height: 50px;
 }
 
-.shop-menu-item-price{
+.shop-menu-list-item-image{
+  margin: -10px;
+  border: 1px solid #d0d0d0;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  text-align: center;
+}
+
+.shop-menu-list-item-name{
+  left: 100px;
+  margin: -5px;
+  position: absolute;
+  font-size: 120%;
+}
+
+.shop-menu-list-item-price{
+  left: 100px;
+  top: 35px;
+  position: absolute;
+  font-size: 70%;
+  margin: -5px;
+}
+
+.shop-menu-list-buy-count{
+  position: absolute;
+  margin-top: -5px;
+  font-size: 180%;
+  right: 35px;
+}
+
+.shop-menu-balloon{
+  position: absolute;
+  border: 1px solid #ffd324;
+  background-color: #fff6bf;
+  display: none;
+  width: 100%;
+  top: -80px;
+}
+
+.shop-menu-balloon:before{
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -15px;
+  border: 15px solid transparent;
+  border-top: 15px solid #ffd324;
+}
+
+.shop-menu-balloon-overview{
+  margin: 10px;
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.shop-menu-balloon-which-add{
   margin: 10px;
 }
 
-.shop-menu-buy-count{
-  margin: 10px;
-}
-
-.shop-menu-buy-button{
-  margin: 10px;
+.shop-menu-list:hover + .shop-menu-balloon{
+  display: block;
 }
 
 .click{
@@ -48,6 +105,6 @@ span{
   font-size: 180%;
 }
 
-.click-vied-data{
+.click-view-data{
   font-size: 70%;
 }

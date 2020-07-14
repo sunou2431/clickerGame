@@ -31,20 +31,20 @@
       // ヘッダー描画
       $hedder = file_get_contents("http://sunou2431.work/hedder.html");
       echo $hedder;
-   ?>
+    ?>
 
     <div class="mainContents" id="mainContent">
       <div class="container">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12 click">
             <input v-model="clickerName" class="click-name">
-            <span class="click-have-count">{{ haveCount }}</span>
-            <span class="click-view-data">自動生産量:{{ increasePerSecondValue }} | クリック生産量:{{ increaseClickValue }}</span>
+            <div class="click-have-count">{{ haveCount }}</div>
+            <div class="click-view-data">自動生産量:{{ increasePerSecondValue }} | クリック生産量:{{ increaseClickValue }}</div>
             <div class="button-area" @click="clickCount"></div>
           </div>
 
           <div class="col-lg-6 col-md-6 col-xs-12">
-            <p>購入画面</p>
+            <p class="buy-message">アイテム購入</p>
             <shop-items
               @want-to-buy-item="canBuyItem"
               v-for="(shopItem, index) in shopItems" 
