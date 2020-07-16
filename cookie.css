@@ -108,3 +108,20 @@
 .click-view-data{
   font-size: 70%;
 }
+
+.message-space-hide{
+  display: none;
+}
+
+.message-space{
+  display: none;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  width: 30%;
+  height: 50px;
+  top: 90vh;
+  right: 38vw;
+  background-color: #B2CBE4;
+  border: 1px solid #a0a0a0;
+}

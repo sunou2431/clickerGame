@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="./cookie.css" type="text/css">
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="./cookieClient.js"></script>
     <script src="./game.js"></script>
     <script type="text/javascript">
@@ -44,16 +45,17 @@
           </div>
 
           <div class="col-lg-6 col-md-6 col-xs-12">
-            <p class="buy-message">アイテム購入</p>
-            <shop-items
+            <div class="router-hedder">
+              <router-link to="/shopItems">施設購入</router-link>
+            </div>
+            <router-view
+              :buy-count="buyCount"
+              :shop-items="shopItems"
               @want-to-buy-item="canBuyItem"
-              v-for="(shopItem, index) in shopItems" 
-              :key="shopItem.id" 
-              :shop-item="shopItem"
-              :buy-count="buyCount[shopItem.id]"
-              :index="index"
-              ref="shopItems">
-            </shop-items>
+            >
+            </router-view>
+          </div>
+          <div id="message-space" class="message-space">
           </div>
         </div>
       </div>

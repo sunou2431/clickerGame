@@ -19,7 +19,12 @@ class CookieData{
           saveStr = saveKeys[i] + "=" + encodeURIComponent( JSON.stringify( datas[saveKeys[i]] )) + "; ";
           break; 
         default:
-          saveStr = saveKeys[i] + "=" + encodeURIComponent( datas[saveKeys[i]] ) + "; ";
+          if( saveKeys[i] == "lastTime" ){
+            saveStr = saveKeys[i] + "=" + Date.now() + "; ";
+          }
+          else{
+            saveStr = saveKeys[i] + "=" + encodeURIComponent( datas[saveKeys[i]] ) + "; ";
+          }
       }
       
       document.cookie = saveStr + this.suffix;

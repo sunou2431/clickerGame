@@ -1,5 +1,23 @@
+// messageスペースに表示される。
+function messageView( str ){
+  $("#message-space").html(str);
+  $("#message-space").show( 1000 );
+  $(function(){
+    setTimeout( function(){
+      $("#message-space").hide(1000);
+    }, 5000);
+  });
+}
+$("#message-space").css("display", "none");
+
+
 window.onload = function(){
-  const templateHTML = `
+  /////////////////////////////////////
+  // コンポーネントの設定 /////////////
+  /////////////////////////////////////
+  // ショップアイテムのコンポーネント
+  // ここらへんも別ファイル化したい
+  const shopItemsHTML = `
     <div class="shop-menu">
       <div class="shop-menu-list" @click="wantToBuyItem">
         <div class="shop-menu-list-item-image">img</div>
@@ -31,11 +49,66 @@ window.onload = function(){
       }
     },
     created: function(){
-      console.log(" TEST ");
     },
-    template: templateHTML
+    template: shopItemsHTML
   });
 
+  const shopItemsBaseHTML = `
+    <div class="shop-menu-base">
+      <p class="shop-menu-base-message">アイテム購入</p>
+      <shop-items
+        @want-to-buy-item="wantToBuyItem"
+        v-for="(shopItem, index) in shopItems"
+        :key="shopItem.id"
+        :shop-item="shopItem"
+        :buy-count="buyCount[shopItem.id]"
+        :index="index"
+        ref="shopItems">
+      </shop-items>
+    </div>
+  `;
+
+  const shopItemsBaseComponent = Vue.component("shop-items-base", {
+    props: {
+      shopItems: Array,
+      buyCount: Object
+    },
+    components: {
+      "shop-items": shopItemsComponent
+    },
+    methods: {
+      wantToBuyItem: function(id, index){
+        this.$emit("want-to-buy-item", id, index);
+      }
+    },
+    template: shopItemsBaseHTML
+  });
+
+  // ユニークアイテムショップのコンポーネント。ここら辺も別ファイル化したい
+  const shopUniqueItemsHTML = `
+    <div class="shop-unique-items">
+    </div>
+  `;
+
+  var shopUniqueItemsComponent = Vue.component("shop-unique-items", {
+    template: shopUniqueItemsHTML
+  });
+
+  //////////////////////////////////////////////////////////////////////
+  // ルーティングの設定 ///////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////
+  const routes = [
+    { path: "/shopItems",       component: shopItemsBaseComponent },
+    { path: "/shopUniqueItems", component: shopUniqueItemsComponent }
+  ];
+
+  const router = new VueRouter({
+    routes
+  });
+
+  ////////////////////////////////////////////////////////////////////
+  // メインゲームの設定や描画 /////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////
   const game = new Vue({
     el: "#mainContent",
     data: {
@@ -82,15 +155,31 @@ window.onload = function(){
                                   "clickerName",
                                   "buyCount",
                                   "increaseClickValue",
-                                  "increasePerSecondValue"
+                                  "increasePerSecondValue",
+                                  "lastTime"
                                  ], this._data );
+        messageView("セーブしました");
       },
 
       // Cookieのデータを読み込み
       loadForCookie: function(){
         const cookieDatas = CookieData.getCookieDatasHash();
         for( let key in cookieDatas ){
-          if( this._data[key] == null ){ 
+          if( this._data[key] == null ){
+            // 最終ログイン時間が入力されていた場合、自動生産する
+            if( key == "lastTime" ){
+              const betweenLastPlayTime = parseInt( ( Date.now() - cookieDatas[key] ) / 2000 ); //ログインしなかった時間/2の自動精算を獲得
+              // クッキーデータの自動生産量が０もしくは存在しないときは処理をしない
+              if( !( cookieDatas["increasePerSecondValue"] == 0 || cookieDatas["increasePerSecondValue"] == null) ){
+                const makeCount = cookieDatas["increasePerSecondValue"] * betweenLastPlayTime;
+                this._data["haveCount"] += parseInt( makeCount );
+                $(function(){
+                  setTimeout( function(){
+                    messageView( "放置期間中に" + makeCount + "個の生産を行いました。" );
+                  }, 100);
+                });
+              }
+            }
             continue;
           }
           // そのまま格納すると少々不都合があるため、データ処理をする。
@@ -98,7 +187,7 @@ window.onload = function(){
           switch( typeof this._data[key] ){
             // 文字列型で認識してしまうため、Int型として読み込む
             case "number":
-              this._data[key] = parseInt( cookieDatas[key] );
+              this._data[key] += parseInt( cookieDatas[key] );
               break;
             // JSON型で保存しているが、String型で読み込んでしまうため連想配列にする
             case "object": 
@@ -150,6 +239,9 @@ window.onload = function(){
     },
     components: {
       "shop-items": shopItemsComponent
-    }
+    },
+    router
   });
-};  
+
+}
+
