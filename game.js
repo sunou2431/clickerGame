@@ -53,6 +53,8 @@ window.onload = function(){
     template: shopItemsHTML
   });
 
+  //////////////////////////////////////////////////////////////////////////////////////
+  // router-viewで表示させるためのview設定。
   const shopItemsBaseHTML = `
     <div class="shop-menu-base">
       <p class="shop-menu-base-message">アイテム購入</p>
@@ -84,14 +86,32 @@ window.onload = function(){
     template: shopItemsBaseHTML
   });
 
+  ////////////////////////////////////////////////////////////////////////////////
   // ユニークアイテムショップのコンポーネント。ここら辺も別ファイル化したい
   const shopUniqueItemsHTML = `
     <div class="shop-unique-items">
     </div>
   `;
 
-  var shopUniqueItemsComponent = Vue.component("shop-unique-items", {
+  const shopUniqueItemsComponent = Vue.component("shop-unique-items", {
     template: shopUniqueItemsHTML
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // セッティングするためのコンポーネント
+  const settingsHTML = `
+    <div class="setting">
+      <input type="Button" @click="saveToCookie" value="セーブする">
+    </div>
+  `;
+
+  const settingsComponent = Vue.component("settings", {
+    methods: {
+      saveToCookie: function(){
+        this.$emit("save-to-cookie");
+      }
+    },
+    template: settingsHTML
   });
 
   //////////////////////////////////////////////////////////////////////
@@ -99,7 +119,8 @@ window.onload = function(){
   ///////////////////////////////////////////////////////////////////
   const routes = [
     { path: "/shopItems",       component: shopItemsBaseComponent },
-    { path: "/shopUniqueItems", component: shopUniqueItemsComponent }
+    { path: "/shopUniqueItems", component: shopUniqueItemsComponent },
+    { path: "/settings",        component: settingsComponent }
   ];
 
   const router = new VueRouter({
@@ -242,6 +263,5 @@ window.onload = function(){
     },
     router
   });
-
 }
 

@@ -47,11 +47,13 @@
           <div class="col-lg-6 col-md-6 col-xs-12">
             <div class="router-hedder">
               <router-link to="/shopItems">施設購入</router-link>
+              <router-link to="/settings">設定</router-link>
             </div>
             <router-view
               :buy-count="buyCount"
               :shop-items="shopItems"
               @want-to-buy-item="canBuyItem"
+              @save-to-cookie="saveToCookiePerMinute"
             >
             </router-view>
           </div>
