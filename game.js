@@ -10,7 +10,6 @@ function messageView( str ){
 }
 $("#message-space").css("display", "none");
 
-
 window.onload = function(){
   /////////////////////////////////////
   // コンポーネントの設定 /////////////
@@ -57,7 +56,7 @@ window.onload = function(){
   // router-viewで表示させるためのview設定。
   const shopItemsBaseHTML = `
     <div class="shop-menu-base">
-      <p class="shop-menu-base-message">アイテム購入</p>
+      <p class="router-title">アイテム購入</p>
       <shop-items
         @want-to-buy-item="wantToBuyItem"
         v-for="(shopItem, index) in shopItems"
@@ -97,11 +96,44 @@ window.onload = function(){
     template: shopUniqueItemsHTML
   });
 
+  //////////////////////////////////////////////////////////////////////////////////
+  // ログインするためのコンポーネント
+  const loginUserHTML = `
+    <div class="login-user-form">
+      <p> TEST </p>
+    </div>
+  `;
+
+  const loginUserComponent = Vue.component("login-user-form", {
+    template: loginUserHTML
+  });
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // ユーザー作成のためのコンポーネント
+  const createUserHTML = `
+    <div class="create-user-form">
+      <p> TEST2 </p>
+    </div>
+  `;
+
+  const createUserComponent = Vue.component("create-user-form", {
+    template: createUserHTML
+  });
+
   ////////////////////////////////////////////////////////////////////////////////
   // セッティングするためのコンポーネント
   const settingsHTML = `
-    <div class="setting">
+    <div class="settings">
+      <p class="router-title">設定</p>
       <input type="Button" @click="saveToCookie" value="セーブする">
+      <div class="user-form">
+        <div class="user-form-router">
+          <router-link to="/settings/login">ログイン</router-link>
+          <router-link to="/settings/create">ユーザー作成</router-link>
+        </div>
+        <router-view>
+        </router-view>
+      </div>
     </div>
   `;
 
@@ -118,9 +150,16 @@ window.onload = function(){
   // ルーティングの設定 ///////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////
   const routes = [
+    { path: "",                 component: shopItemsBaseComponent },
     { path: "/shopItems",       component: shopItemsBaseComponent },
     { path: "/shopUniqueItems", component: shopUniqueItemsComponent },
-    { path: "/settings",        component: settingsComponent }
+    { path: "/settings",        component: settingsComponent, 
+      children: [
+        { path: "create", component: createUserComponent },
+        { path: "login",  component: loginUserComponent },
+        { path: "",       component: loginUserComponent }
+      ]
+    }
   ];
 
   const router = new VueRouter({
@@ -137,7 +176,7 @@ window.onload = function(){
       haveCount: 0, 
       shopItems: shopItemsList,
       buyCount: {},
-      increasePerSecondValue: 1,
+      increasePerSecondValue: 0,
       increaseClickValue: 1,
       timeObjForMake: null,
       timeObjForSave: null,
@@ -189,17 +228,7 @@ window.onload = function(){
           if( this._data[key] == null ){
             // 最終ログイン時間が入力されていた場合、自動生産する
             if( key == "lastTime" ){
-              const betweenLastPlayTime = parseInt( ( Date.now() - cookieDatas[key] ) / 2000 ); //ログインしなかった時間/2の自動精算を獲得
-              // クッキーデータの自動生産量が０もしくは存在しないときは処理をしない
-              if( !( cookieDatas["increasePerSecondValue"] == 0 || cookieDatas["increasePerSecondValue"] == null) ){
-                const makeCount = cookieDatas["increasePerSecondValue"] * betweenLastPlayTime;
-                this._data["haveCount"] += parseInt( makeCount );
-                $(function(){
-                  setTimeout( function(){
-                    messageView( "放置期間中に" + makeCount + "個の生産を行いました。" );
-                  }, 100);
-                });
-              }
+              this.productLeavingCount( cookieDatas );
             }
             continue;
           }
@@ -208,6 +237,11 @@ window.onload = function(){
           switch( typeof this._data[key] ){
             // 文字列型で認識してしまうため、Int型として読み込む
             case "number":
+              // 初期値の1のせいでセーブロードで永遠に増えてしまう為の対策
+              if( key == "increaseClickValue" ){
+                this._data[key] += parseInt( cookieDatas[key] ) - 1;
+                break;
+              }
               this._data[key] += parseInt( cookieDatas[key] );
               break;
             // JSON型で保存しているが、String型で読み込んでしまうため連想配列にする
@@ -217,6 +251,22 @@ window.onload = function(){
             default:
               this._data[key] = cookieDatas[key];
           }
+        }
+      },
+
+      // 放置期間の生産を増やす
+      productLeavingCount: function( cookieDatas ){
+        const betweenLastPlayTime = parseInt( ( Date.now() - cookieDatas["lastTime"] ) / 2000 ); //ログインしなかった時間/2の自動精算を獲得
+        // クッキーデータの自動生産量が０もしくは存在しないときは処理をしない
+        if( !( cookieDatas["increasePerSecondValue"] == 0 || cookieDatas["increasePerSecondValue"] == null) ){
+          const makeCount = cookieDatas["increasePerSecondValue"] * betweenLastPlayTime;
+          this._data["haveCount"] += parseInt( makeCount );
+          // 直接実行だとなぜかうまくできないから、delayを噛ませる
+          $(function(){
+            setTimeout( function(){
+              messageView( "放置期間中に" + makeCount + "個の生産を行いました。" );
+            }, 100);
+          });
         }
       },
 

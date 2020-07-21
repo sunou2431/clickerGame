@@ -15,6 +15,10 @@
   font-size: 30px;
 }
 
+.shop-menu-base{
+  padding: 10px;
+}
+
 .shop-menu{
   position: relative
 }
@@ -79,7 +83,7 @@
 
 .shop-menu-balloon-overview{
   margin: 10px;
-  border-bottom: 1px solid #d0d0d0;
+  border-bottom: 1px solid #ffd324;
 }
 
 .shop-menu-balloon-which-add{
@@ -120,8 +124,23 @@
   position: fixed;
   width: 30%;
   height: 50px;
-  top: 90vh;
+  top: 80vh;
   right: 38vw;
   background-color: #B2CBE4;
   border: 1px solid #a0a0a0;
+}
+
+.router-hedder{
+  text-align: center;
+  font-size: 150%;
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.router-title{
+  font-size: 120%;
+  text-align: center;
+}
+
+.settings{
+  padding: 10px;
 }
